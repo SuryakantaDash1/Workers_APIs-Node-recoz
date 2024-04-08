@@ -1,4 +1,4 @@
-import userModel from "../model/address.model.js";
+import addressModel from "../model/address.model.js";
 import bcrypt from 'bcrypt';
 import jwt from "jsonwebtoken";
 import twilio from 'twilio';
@@ -29,7 +29,7 @@ export async function verifyUser(req, res, next){
     try {
         const {username} = req.method == "GET" ? req.query : req.body;
 
-        let exist = await userModel.findOne({username});
+        let exist = await addressModel.findOne({username});
         if(!exist) return res.status(404).send({error: "can't find user"});
         next();
     } catch (error) {
@@ -44,9 +44,9 @@ export async function register(req, res) {
     try {
         const { username, password, email, mobile, firstName, lastName, companyName,  profile, gender } = req.body;
 
-        const existingUser = await userModel.findOne({ username }).exec();
-        const existingEmail = await userModel.findOne({ email }).exec();
-        const existingMobile = await userModel.findOne({ mobile }).exec();
+        const existingUser = await addressModel.findOne({ username }).exec();
+        const existingEmail = await addressModel.findOne({ email }).exec();
+        const existingMobile = await addressModel.findOne({ mobile }).exec();
 
         if (existingUser) {
             return res.status(400).send({ error: "Please use a unique username." });
@@ -64,7 +64,7 @@ export async function register(req, res) {
         const otp = generateOTP();
 
         // Create a new user with OTP
-        const newUser = new userModel({
+        const newUser = new addressModel({
             username,
             password,
             email,
@@ -101,7 +101,7 @@ export async function verifyOTP(req, res) {
         const { mobile, otp } = req.body;
 
         // Find user by mobile number
-        const user = await userModel.findOne({ mobile }).exec();
+        const user = await addressModel.findOne({ mobile }).exec();
 
         if (!user) {
             return res.status(404).send({ error: "User not found." });
@@ -137,7 +137,7 @@ export async function login(req, res) {
     const { username, password } = req.body;
     try {
         // Find user by username
-        const user = await userModel.findOne({ username,  }).exec();
+        const user = await addressModel.findOne({ username,  }).exec();
         
         // If user doesn't exist
         if (!user) {
@@ -181,7 +181,7 @@ export async function getUser(req, res) {
             return res.status(501).send({ error: "Invalid username" });
         }
 
-        const user = await userModel.findOne({ username }).exec();
+        const user = await addressModel.findOne({ username }).exec();
         
         if (!user) {
             return res.status(404).send({ error: "User not found" });
@@ -208,7 +208,7 @@ export async function updateUser(req, res) {
         }
 
         // Find the user by username
-        const user = await userModel.findOne({ username }).exec();
+        const user = await addressModel.findOne({ username }).exec();
         if (!user) {
             return res.status(404).send({ error: "User not found" });
         }
@@ -236,7 +236,7 @@ export async function deleteUser(req, res) {
         }
 
         // Find the user by username and delete
-        const deletedUser = await userModel.findOneAndDelete({ username }).exec();
+        const deletedUser = await addressModel.findOneAndDelete({ username }).exec();
 
         // Check if user exists
         if (!deletedUser) {

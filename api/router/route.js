@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { createNewUserRequest, createPastProjectDetails, deletePastProject, deleteUser, editProjectDetails, getAllUserRequests, getOngoingProjectDetails, getPastProjectDetails, getUser, listOngoingProjects, login, register, setServicesOffered, updateAllRequestStatus, updatePastProject, updateProjectDetails, updateUser, verifyOTP, verifyUser } from "../controller/userController.js";
+import { register, deleteUser,  updateUser, verifyOTP, verifyUser } from "../controller/userController.js";
 const router = Router();
 import Auth from "../middleware/auth.js";
 import { validationSchema } from "../utils/userValidation.js";
