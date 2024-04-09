@@ -1,20 +1,20 @@
 import mongoose from 'mongoose';
 
 const projectSchema = new mongoose.Schema({
-    owner: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-    workers: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
-    siteImages: [String], // New field for storing site images
+    projectType: String,
+    projectLocation: String,
+    city: String,
+    pincode: String,
+    services: [String],
+    imageUrl: String,
     status: {
         type: Number,
-        enum: [0, 1, 2, 3, 4], // Project statuses: 0: Cancelled, 1: In Process, 2: 25% Completed, 3: 75% Completed, 4: Completed
-        default: 1 // Default status: In Process
-    }
+        default: 4 // Default status for completed project
+    },
+    siteImages: [String]
 });
 
-const ProjectModel = mongoose.model('Project', projectSchema);
-
-export default ProjectModel;
-
+export default mongoose.model('Project', projectSchema);
 
 
 

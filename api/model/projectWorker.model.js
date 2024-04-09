@@ -29,15 +29,11 @@ export const pastProjectSchema = new mongoose.Schema({
         type: String
     },
     status: {
-        type: String,
-        enum: ['In Process', '25% Completed', '75% Completed', 'Completed'],
-        default: 'In Process'
+        type: Number,
+        enum: [0, 1, 2, 3, 4],
+        default: 1
     },
-    partnerId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
-        required: true
-    }
+    
 }, { timestamps: true });
 
 export default mongoose.model('PastProject', pastProjectSchema);

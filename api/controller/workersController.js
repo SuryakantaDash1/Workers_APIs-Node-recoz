@@ -1,4 +1,7 @@
 import addressModel from "../model/workers.model.js";
+import projects from '../model/project.model.js';
+import projectWorkers from '../model/projectWorker.model.js';
+
 import bcrypt from 'bcrypt';
 import jwt from "jsonwebtoken";
 import twilio from 'twilio';
@@ -352,3 +355,131 @@ export async function updateAddressDetails(req, res) {
         return res.status(500).send({ error: "An error occurred while updating address details" });
     }
 }
+
+
+
+
+// // Controller function
+// export async function createPastProject(req, res) {
+//     try {
+//         const { projectId, projectType, projectLocation, city, pincode, services, imageUrl } = req.body;
+//         // Create past project details
+//         const newProject = new projects({
+//             projectId,
+//             projectType,
+//             projectLocation,
+//             city,
+//             pincode,
+//             services,
+//             imageUrl,
+//             status: 4 // Status 4 represents completed project
+//         });
+//         await newProject.save();
+        
+//         // Update projectWorkers collection
+//         const projectWorker = new projectWorkers({
+//             projectId,
+//             workerId: req.user.userId, // Assuming user is authenticated and userId is available in req.user
+//             isWorking: false // Project is completed
+//         });
+//         await projectWorker.save();
+
+//         return res.status(201).send({ msg: "Past project created successfully" });
+//     } catch (error) {
+//         console.error("Error creating past project:", error);
+//         return res.status(500).send({ error: "An error occurred while creating past project" });
+//     }
+// }
+
+
+// Controller function
+export async function createPastProject(req, res) {
+    try {
+        const { projectId, projectType, projectLocation, city, pincode, services, imageUrl, status } = req.body;
+       
+
+        // Create past project details
+        const newProject = new projectWorkers({
+            projectId,
+            projectType,
+            projectLocation,
+            city,
+            pincode,
+            services,
+            imageUrl,
+            status // Status 4 represents completed project
+        });
+        await newProject.save();
+        
+        
+        return res.status(201).send({ msg: "Past project created successfully" });
+    } catch (error) {
+        console.error("Error creating past project:", error);
+        return res.status(500).send({ error: "An error occurred while creating past project" });
+    }
+}
+
+
+
+
+
+
+export async function getPastProjects(req, res) {
+    try {
+        // const workerId = req.params.workerId;
+        const { workerId } = req.params;
+
+        // Fetch past project details for the worker
+        const pastProjects = await projectWorkers.find({ workerId, isWorking: false }).exec();
+
+        return res.status(200).send({ pastProjects });
+    } catch (error) {
+        console.error("Error fetching past projects:", error);
+        return res.status(500).send({ error: "An error occurred while fetching past projects" });
+    }
+}
+
+
+// Controller function
+export async function getOngoingProjects(req, res) {
+    try {
+        const workerId = req.params.workerId;
+        // Fetch ongoing project details for the worker
+        const ongoingProjects = await projectWorkers.find({ workerId, isWorking: true }).populate('projectId').exec();
+        return res.status(200).send({ ongoingProjects });
+    } catch (error) {
+        console.error("Error fetching ongoing projects:", error);
+        return res.status(500).send({ error: "An error occurred while fetching ongoing projects" });
+    }
+}
+
+
+// Controller function
+export async function getOngoingProjectDetails(req, res) {
+    try {
+        const projectId = req.params.projectId;
+        // Fetch project details along with owner and worker details for the specified project
+        const projectDetails = await projects.findById(projectId).populate('ownerId').populate('workers').exec();
+        return res.status(200).send({ projectDetails });
+    } catch (error) {
+        console.error("Error fetching ongoing project details:", error);
+        return res.status(500).send({ error: "An error occurred while fetching ongoing project details" });
+    }
+}
+
+
+// Controller function
+export async function updateProjectDetails(req, res) {
+    try {
+        const projectId = req.params.projectId;
+        const { siteImages } = req.body;
+        // Update project details to allow workers to upload site images
+        const updatedProject = await projects.findByIdAndUpdate(projectId, { $push: { siteImages } }, { new: true });
+        return res.status(200).send({ msg: "Project details updated successfully", updatedProject });
+    } catch (error) {
+        console.error("Error updating project details:", error);
+        return res.status(500).send({ error: "An error occurred while updating project details" });
+    }
+}
+
+
