@@ -8,6 +8,7 @@ export const validationSchema = Joi.object({
     mobile: Joi.number().required(),
     firstName: Joi.string().required(),
     lastName: Joi.string().required(),
+    yearsOfExperience: Joi.number().required(),
     profile: Joi.string().required(),
     gender: Joi.string().required()
 });

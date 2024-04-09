@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-export const addressSchema = new mongoose.Schema({
+export const workersSchema = new mongoose.Schema({
     username: {
         type: String,
         required: [true, "please provide username"],
@@ -62,5 +62,5 @@ export const addressSchema = new mongoose.Schema({
 
 );
 
-export default mongoose.model('Address', addressSchema);
+export default mongoose.model('Workers', workersSchema);
 

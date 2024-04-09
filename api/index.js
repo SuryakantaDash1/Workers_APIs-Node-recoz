@@ -2,7 +2,7 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import dotenv from 'dotenv';
 import connect from './database/conn.js'; 
-// import router from './router/route.js';
+import router from './router/route.js';
 
 const app = express();
 
@@ -16,7 +16,7 @@ app.get('/', (req, res) => {
     res.status(201).json("Home");
 });
 
-// app.use('/api', router);
+app.use('/api', router);
 
 connect();
 

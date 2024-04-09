@@ -1,4 +1,4 @@
-import addressModel from "../model/address.model.js";
+import addressModel from "../model/workers.model.js";
 import bcrypt from 'bcrypt';
 import jwt from "jsonwebtoken";
 import twilio from 'twilio';
@@ -42,7 +42,7 @@ export async function verifyUser(req, res, next){
 
 export async function register(req, res) {
     try {
-        const { username, password, email, mobile, firstName, lastName, companyName,  profile, gender } = req.body;
+        const { username, password, email, mobile, firstName, lastName, yearsOfExperience, profile, gender } = req.body;
 
         const existingUser = await addressModel.findOne({ username }).exec();
         const existingEmail = await addressModel.findOne({ email }).exec();
@@ -63,15 +63,18 @@ export async function register(req, res) {
         // Generate OTP
         const otp = generateOTP();
 
+        // Hash the password
+        const hashedPassword = await bcrypt.hash(password, 10);
+
         // Create a new user with OTP
         const newUser = new addressModel({
             username,
-            password,
+            password: hashedPassword,
             email,
             mobile,
             firstName,
             lastName,
-            companyName,
+            yearsOfExperience,
             profile,
             gender,
             otp 
@@ -251,3 +254,101 @@ export async function deleteUser(req, res) {
 }
 
 
+
+
+// Function to set address details
+export async function setAddressDetails(req, res) {
+    try {
+        const { userId, addressId, address, state, pincode, latitude, longitude } = req.body;
+
+        // Find the user by userId
+        const user = await addressModel.findOne({ _id: userId }).exec();
+
+        if (!user) {
+            return res.status(404).send({ error: "User not found" });
+        }
+
+        // Push new address details to addresses array
+        user.addresses.push({ addressId, address, state, pincode, latitude, longitude });
+
+        await user.save();
+
+        return res.status(200).send({ msg: "Address details added successfully" });
+    } catch (error) {
+        console.error("Error setting address details:", error);
+        return res.status(500).send({ error: "An error occurred while setting address details" });
+    }
+}
+
+// Function to set services offered by the worker
+export async function setServicesOffered(req, res) {
+    try {
+        const { userId, services } = req.body;
+
+        // Find the user by workerId
+        const user = await addressModel.findOne({ _id: userId }).exec();
+
+        if (!user) {
+            return res.status(404).send({ error: "Worker not found" });
+        }
+
+        // Update services offered
+        user.servicesOffered = services;
+
+        await user.save();
+
+        return res.status(200).send({ msg: "Services offered updated successfully" });
+    } catch (error) {
+        console.error("Error setting services offered:", error);
+        return res.status(500).send({ error: "An error occurred while setting services offered" });
+    }
+}
+
+
+// Function to get address details
+export async function getAddressDetails(req, res) {
+    try {
+        const { username } = req.params;
+
+        const user = await addressModel.findOne({ username }).exec();
+        
+        if (!user) {
+            return res.status(404).send({ error: "User not found" });
+        }
+
+        // Return address details
+        return res.status(200).send(user.addresses);
+    } catch (error) {
+        console.error("Error retrieving address details:", error);
+        return res.status(500).send({ error: "An error occurred while fetching address details" });
+    }
+}
+
+// Function to update address details
+export async function updateAddressDetails(req, res) {
+    try {
+        const { username, addressId } = req.params;
+        const updates = req.body;
+
+        const user = await addressModel.findOne({ username }).exec();
+        
+        if (!user) {
+            return res.status(404).send({ error: "User not found" });
+        }
+
+        // Find the address by its unique ID
+        const addressToUpdate = user.addresses.find(address => address._id.toString() === addressId);
+        if (!addressToUpdate) {
+            return res.status(404).send({ error: "Address not found" });
+        }
+
+        // Update address details
+        Object.assign(addressToUpdate, updates);
+        await user.save();
+
+        return res.status(200).send({ msg: "Address details updated successfully" });
+    } catch (error) {
+        console.error("Error updating address details:", error);
+        return res.status(500).send({ error: "An error occurred while updating address details" });
+    }
+}
