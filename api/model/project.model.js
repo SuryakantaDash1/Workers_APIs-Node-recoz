@@ -1,20 +1,46 @@
 import mongoose from 'mongoose';
 
 const projectSchema = new mongoose.Schema({
+    owner: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
     projectType: String,
     projectLocation: String,
     city: String,
     pincode: String,
     services: [String],
     imageUrl: String,
-    status: {
-        type: Number,
-        default: 4 // Default status for completed project
-    },
-    siteImages: [String]
+    siteImages: [String],
+    status: { type: Number, default: 1 } // Default status: In Process
 });
 
-export default mongoose.model('Project', projectSchema);
+const Project = mongoose.model('Project', projectSchema);
+
+export default Project;
+
+
+
+
+
+
+
+
+
+// import mongoose from 'mongoose';
+
+// const projectSchema = new mongoose.Schema({
+//     projectType: String,
+//     projectLocation: String,
+//     city: String,
+//     pincode: String,
+//     services: [String],
+//     imageUrl: String,
+//     status: {
+//         type: Number,
+//         default: 4 // Default status for completed project
+//     },
+//     siteImages: [String]
+// });
+
+// export default mongoose.model('Project', projectSchema);
 
 
 

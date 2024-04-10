@@ -359,37 +359,7 @@ export async function updateAddressDetails(req, res) {
 
 
 
-// // Controller function
-// export async function createPastProject(req, res) {
-//     try {
-//         const { projectId, projectType, projectLocation, city, pincode, services, imageUrl } = req.body;
-//         // Create past project details
-//         const newProject = new projects({
-//             projectId,
-//             projectType,
-//             projectLocation,
-//             city,
-//             pincode,
-//             services,
-//             imageUrl,
-//             status: 4 // Status 4 represents completed project
-//         });
-//         await newProject.save();
-        
-//         // Update projectWorkers collection
-//         const projectWorker = new projectWorkers({
-//             projectId,
-//             workerId: req.user.userId, // Assuming user is authenticated and userId is available in req.user
-//             isWorking: false // Project is completed
-//         });
-//         await projectWorker.save();
 
-//         return res.status(201).send({ msg: "Past project created successfully" });
-//     } catch (error) {
-//         console.error("Error creating past project:", error);
-//         return res.status(500).send({ error: "An error occurred while creating past project" });
-//     }
-// }
 
 
 // Controller function
@@ -440,7 +410,6 @@ export async function getPastProjects(req, res) {
 }
 
 
-// Controller function
 export async function getOngoingProjects(req, res) {
     try {
         const workerId = req.params.workerId;
@@ -454,7 +423,6 @@ export async function getOngoingProjects(req, res) {
 }
 
 
-// Controller function
 export async function getOngoingProjectDetails(req, res) {
     try {
         const projectId = req.params.projectId;
@@ -468,7 +436,7 @@ export async function getOngoingProjectDetails(req, res) {
 }
 
 
-// Controller function
+
 export async function updateProjectDetails(req, res) {
     try {
         const projectId = req.params.projectId;

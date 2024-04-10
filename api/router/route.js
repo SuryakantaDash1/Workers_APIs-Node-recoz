@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { register, deleteUser,  updateUser, verifyOTP, verifyUser, setAddressDetails, setServicesOffered, getAddressDetails, updateAddressDetails, login, getUser, createPastProject, getPastProjects, getOngoingProjects, getOngoingProjectDetails, updateProjectDetails } from "../controller/workersController.js";
+import { register, deleteUser,  updateUser, verifyOTP, verifyUser, setAddressDetails, setServicesOffered, getAddressDetails, updateAddressDetails, login, getUser } from "../controller/workersController.js";
 const router = Router();
 import Auth from "../middleware/auth.js";
 import { validationSchema } from "../utils/userValidation.js";
@@ -29,13 +29,13 @@ router.put('/updateAddressDetails/:username/:addressId', updateAddressDetails);
 
 
 
-router.post('/createPastProject', createPastProject);
-router.get('/getPastProject/:workerId', getPastProjects);
+// router.post('/createPastProject', createPastProject);
+// router.get('/getPastProject/:workerId', getPastProjects);
 
 
-router.get('/getOngoingProjects/:workerId', getOngoingProjects);
-router.get('/getOngoingProjectDetails/:projectId', getOngoingProjectDetails);
-router.put('/updateProjectDetails/:projectId', updateProjectDetails);
+// router.get('/getOngoingProjects/:workerId', getOngoingProjects);
+// router.get('/getOngoingProjectDetails/:projectId', getOngoingProjectDetails);
+// router.put('/updateProjectDetails/:projectId', updateProjectDetails);
 
 
 export default router;

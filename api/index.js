@@ -3,6 +3,7 @@ import bodyParser from 'body-parser';
 import dotenv from 'dotenv';
 import connect from './database/conn.js'; 
 import router from './router/route.js';
+import route from './router/projectRoute.js';
 
 const app = express();
 
@@ -17,6 +18,7 @@ app.get('/', (req, res) => {
 });
 
 app.use('/api', router);
+app.use('/api', route);
 
 connect();
 
