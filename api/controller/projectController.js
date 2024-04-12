@@ -8,23 +8,6 @@ import projects from "../model/project.model.js";
 
 
 
-// Get all past project details for a specific worker
-export async function getPastProjectDetails(req, res) {
-    try {
-        const { workerId } = req.params;
-
-        // Find all past projects for the worker from projectWorkers collection
-        const pastProjects = await projectWorkers.find({ workerId }).exec();
-
-        return res.status(200).send(pastProjects);
-    } catch (error) {
-        console.error("Error fetching past project details:", error);
-        return res.status(500).send({ error: "An error occurred while fetching past project details" });
-    }
-}
-
-
-
 // Create a past project
 export async function createPastProject(req, res) {
     try {
@@ -50,6 +33,26 @@ export async function createPastProject(req, res) {
         return res.status(500).send({ error: "An error occurred while creating past project" });
     }
 }
+
+
+
+
+// Get all past project details for a specific worker
+export async function getPastProjectDetails(req, res) {
+    try {
+        const { workerId } = req.params;
+
+        // Find all past projects for the worker from projectWorkers collection
+        const pastProjects = await projectWorkers.find({ workerId }).exec();
+
+        return res.status(200).send(pastProjects);
+    } catch (error) {
+        console.error("Error fetching past project details:", error);
+        return res.status(500).send({ error: "An error occurred while fetching past project details" });
+    }
+}
+
+
 
 
 

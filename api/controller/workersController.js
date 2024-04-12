@@ -1,18 +1,13 @@
 import addressModel from "../model/workers.model.js";
 import projects from '../model/project.model.js';
 import projectWorkers from '../model/projectWorker.model.js';
-
 import bcrypt from 'bcrypt';
 import jwt from "jsonwebtoken";
-import twilio from 'twilio';
+import fetch from 'node-fetch';
 import dotenv from 'dotenv';
 dotenv.config();
 
 
-
-const twilioAccountId = process.env.TWILIO_ACCOUNT_SID;
-const twilioAuthToken = process.env.TWILIO_AUTH_TOKEN;
-const client = twilio(twilioAccountId, twilioAuthToken);
 
 const generateOTP = () => {
     let digits = '0123456789';
@@ -23,24 +18,6 @@ const generateOTP = () => {
     }
     return OTP;
 };
-
-
-
-
-
-export async function verifyUser(req, res, next){
-    try {
-        const {username} = req.method == "GET" ? req.query : req.body;
-
-        let exist = await addressModel.findOne({username});
-        if(!exist) return res.status(404).send({error: "can't find user"});
-        next();
-    } catch (error) {
-        return res.status(500).send({ error: "Authentication error" });
-    }
-}
-
-
 
 
 export async function register(req, res) {
@@ -83,24 +60,51 @@ export async function register(req, res) {
             otp 
         });
 
-        // Send OTP to user's mobile number using Twilio
-        await client.messages.create({
-            body: `Your OTP for registration is ${otp}`,
-            messagingServiceSid: 'MGd8a92961ee9519e8ff116dea991aadae', 
-            to: mobile // Send OTP to the user's mobile number
-        });
+        // Construct the message
+        const phone = String(mobile).replace("+", "");
+        const message = `Dear Customer, Your OTP for mobile number verification is ${otp}. Please do not share this OTP to anyone - Firstricoz Pvt. Ltd.`;
 
-        // Save the user to the database
-        await newUser.save();
+        // Make request to your company's SMS gateway
+        const response = await fetch(`https://smsgw.tatatel.co.in:9095/campaignService/campaigns/qs?dr=false&sender=FRICOZ&recipient=${phone}&msg=${encodeURIComponent(message)}&user=FIRSTR&pswd=First^01&PE_ID=1601832170235925649&Template_ID=1607100000000306120`);
 
-        // Send response
-        return res.status(201).send({ msg: "User registered successfully. Please verify OTP." });
-
+        // Check if the request was successful
+        if (response.ok) {
+            // Save the user to the database
+            await newUser.save();
+            
+            // Send response
+            return res.status(201).send({ msg: "User registered successfully. Please verify OTP." });
+        } else {
+            throw new Error('Failed to send OTP via SMS');
+        }
     } catch (error) {
         console.error("Error during registration:", error);
         return res.status(500).send({ error: "An error occurred." });
     }
 }
+
+
+
+
+
+
+
+
+
+export async function verifyUser(req, res, next){
+    try {
+        const {username} = req.method == "GET" ? req.query : req.body;
+
+        let exist = await addressModel.findOne({username});
+        if(!exist) return res.status(404).send({error: "can't find user"});
+        next();
+    } catch (error) {
+        return res.status(500).send({ error: "Authentication error" });
+    }
+}
+
+
+
 
 export async function verifyOTP(req, res) {
     try {
